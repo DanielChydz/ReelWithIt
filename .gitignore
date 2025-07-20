@@ -3,6 +3,19 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Added manually to the .gitignore template
+*.env
+alembic_db/versions/*
+./venv-rwi
+/env
+/venv-rwi
+*.pyo
+*.pyd
+*.Python
+htmlcov/
+.pytest_cache/
+/rwi_frontend
+
 # User-specific files
 *.rsuser
 *.suo
