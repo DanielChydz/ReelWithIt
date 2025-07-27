@@ -35,8 +35,8 @@ def create_user(user: schemas.UserCreate, db: Annotated[Session, Depends(get_db)
     return new_user_out
     
 # Login user
-@router.post("/login", response_model=schemas.Token)
-def login_user(user_credentials: Annotated[OAuth2PasswordRequestForm, Depends()], db: Annotated[Session, Depends(get_db)]) -> schemas.Token:
+@router.post("/login", response_model=schemas.UserWithTokenOut)
+def login_user(user_credentials: Annotated[OAuth2PasswordRequestForm, Depends()], db: Annotated[Session, Depends(get_db)]) -> schemas.UserWithTokenOut:
     user: Users | None = db.query(Users).filter(Users.email == user_credentials.username).first()
     
     if user is None:
@@ -45,5 +45,10 @@ def login_user(user_credentials: Annotated[OAuth2PasswordRequestForm, Depends()]
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Invalid credentials")
     
     time_delta: timedelta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    token: schemas.Token = create_access_token({"id": user.user_id}, time_delta)
-    return token
+    access_token: schemas.Token = create_access_token({"id": user.user_id}, time_delta)
+    user_with_token_out = schemas.UserWithTokenOut(
+        access_token=access_token.access_token,
+        token_type=access_token.token_type,
+        user=schemas.UserOut.model_validate(user)
+    )
+    return user_with_token_out
