@@ -14,7 +14,6 @@ alembic_db/versions/*
 *.Python
 htmlcov/
 .pytest_cache/
-/rwi_frontend
 
 # User-specific files
 *.rsuser
