@@ -8,22 +8,22 @@ The goal was to create a movie based social media platform, wrapped in a modern,
 
 ---
 
-## 🔧 Tech Stack
+## Tech Stack
 
-### 🧠 Backend (FastAPI)
+### Backend (FastAPI)
 - Python
 - FastAPI
 - Pydantic / SQLAlchemy / Alembic
 - PostgreSQL
 - Pytest
 
-### 💻 Frontend (React)
+### Frontend (React)
 - React + Vite
 - TypeScript
 - Tailwind CSS
 ---
 
-## ✅ Features
+## Features
 
 - User registration & login
 - Secure token-based authentication
