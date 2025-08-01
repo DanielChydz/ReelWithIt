@@ -65,7 +65,7 @@ def login_user(
         secure=True,
         samesite="lax",
         path="/",
-        max_age=7*24*60*60
+        max_age=int(settings.REFRESH_TOKEN_EXPIRE_DAYS) * 24 * 60 * 60
     )
     
     return access_token
