@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     ENCODING_ALGORITHM: str = ""
     HASHING_ALGORITHM: str = ""
     ACCESS_TOKEN_EXPIRE_MINUTES: float = 60
+    REFRESH_TOKEN_EXPIRE_DAYS: float = 30
 
     model_config = SettingsConfigDict(env_file=".env")
 
