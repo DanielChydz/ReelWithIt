@@ -5,11 +5,15 @@ from fastapi.security import OAuth2PasswordRequestForm
 from rwi_backend import schemas
 from sqlalchemy.orm import Session
 from rwi_backend.database import get_db
+<<<<<<< HEAD
 from rwi_backend.oauth2 import (
     create_access_token,
     create_refresh_token,
     verify_access_token,
 )
+=======
+from rwi_backend.oauth2 import create_access_token, create_refresh_token, verify_access_token
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
 from rwi_backend.utils import HashPassword, VerifyPassword
 from rwi_backend.models import Users
 from rwi_backend.config import settings
@@ -18,6 +22,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 # Create user
+<<<<<<< HEAD
 @router.post(
     "/register", response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED
 )
@@ -25,6 +30,14 @@ def create_user(
     user: schemas.UserCreate, db: Annotated[Session, Depends(get_db)]
 ) -> schemas.UserOut:
 
+=======
+@router.post("/register", response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED)
+def create_user(
+    user: schemas.UserCreate,
+    db: Annotated[Session, Depends(get_db)]
+) -> schemas.UserOut:
+    
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
     # Check if user exists
     existing_user = db.query(Users).filter(Users.email == user.email).first()
     if existing_user is not None:
@@ -53,6 +66,7 @@ def create_user(
 def login_user(
     user_credentials: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[Session, Depends(get_db)],
+<<<<<<< HEAD
     response: Response,
 ) -> schemas.Token:
 
@@ -60,11 +74,19 @@ def login_user(
         db.query(Users).filter(Users.email == user_credentials.username).first()
     )
 
+=======
+    response: Response
+) -> schemas.Token:
+    
+    user: Users | None = db.query(Users).filter(Users.email == user_credentials.username).first()
+    
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
         )
     if not VerifyPassword(user_credentials.password, user.password):
+<<<<<<< HEAD
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
         )
@@ -76,6 +98,15 @@ def login_user(
         {"id": user.user_id}, time_delta
     )
 
+=======
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Invalid credentials")
+    
+    time_delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token: schemas.Token = create_access_token({"id": user.user_id}, time_delta)
+    time_delta = timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    refresh_token: schemas.Token = create_refresh_token({"id": user.user_id}, time_delta)
+    
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
     response.set_cookie(
         key="refresh_token",
         value=refresh_token.token,
@@ -83,6 +114,7 @@ def login_user(
         secure=True,
         samesite="lax",
         path="/",
+<<<<<<< HEAD
         max_age=int(settings.REFRESH_TOKEN_EXPIRE_DAYS) * 24 * 60 * 60,
     )
 
@@ -109,3 +141,26 @@ def refresh_token(request: Request, response: Response) -> schemas.Token:
     new_refresh_token = create_access_token({"id": user_id.user_id}, time_delta)
 
     return new_refresh_token
+=======
+        max_age=7*24*60*60
+    )
+    
+    return access_token
+
+# Refresh token
+@router.post("/refresh", response_model=schemas.Token)
+def refresh_token(
+    request: Request,
+    response: Response
+):
+    
+    refresh_token = request.cookies.get("refresh_token")
+    if not refresh_token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    
+    user_id: schemas.TokenData = verify_access_token(refresh_token)
+    time_delta = timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    new_refresh_token = create_access_token({"id": user_id.user_id}, time_delta)
+    
+    return new_refresh_token
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)

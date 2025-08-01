@@ -75,9 +75,13 @@ def unauthorized_client() -> Generator[TestClient, None, None]:
 @pytest.fixture
 def authorized_client(test_user_token: schemas.Token) -> TestClient:
     authorized_client = TestClient(rwi)
+<<<<<<< HEAD:rwi_backend/tests/endpoints/conftest.py
     authorized_client.headers.update(
         {"Authorization": f"Bearer {test_user_token.token}"}
     )
+=======
+    authorized_client.headers = {**authorized_client.headers, "Authorization": f"Bearer {test_user_token.token}"}
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility):test/endpoints/conftest.py
     return authorized_client
 
 

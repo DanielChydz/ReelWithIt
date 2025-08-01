@@ -14,16 +14,28 @@ router = APIRouter(prefix="/rating", tags=["ratings"])
     status_code=status.HTTP_200_OK,
     response_model=schemas.RatingOutPersonal,
 )
+<<<<<<< HEAD
+=======
+
+@router.post("/{movie_id}", status_code=status.HTTP_200_OK, response_model=schemas.RatingOutPersonal)
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
 def add_rating(
     movie_id: int,
     rating: schemas.RatingAdd,
     db: Annotated[Session, Depends(get_db)],
+<<<<<<< HEAD
     current_user: schemas.UserOut = Depends(get_current_user_auth),
 ) -> schemas.RatingOutPersonal:
 
     existing_movie: models.Movies | None = (
         db.query(models.Movies).filter_by(movie_id=movie_id).first()
     )
+=======
+    current_user: schemas.UserOut = Depends(get_current_user_auth)
+):
+    
+    existing_movie: models.Movies | None = db.query(models.Movies).filter_by(movie_id=movie_id).first()
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
     if existing_movie is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -67,10 +79,15 @@ def add_rating(
 def read_rating(
     movie_id: int, db: Annotated[Session, Depends(get_db)]
 ) -> schemas.RatingOut:
+<<<<<<< HEAD
 
     movie: models.Movies | None = (
         db.query(models.Movies).filter(models.Movies.movie_id == movie_id).first()
     )
+=======
+    
+    movie: models.Movies | None = db.query(models.Movies).filter(models.Movies.movie_id == movie_id).first()
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
     if movie is None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -89,12 +106,19 @@ def update_rating(
     movie_id: int,
     rating: schemas.RatingAdd,
     db: Annotated[Session, Depends(get_db)],
+<<<<<<< HEAD
     current_user: schemas.UserOut = Depends(get_current_user_auth),
 ) -> schemas.RatingOutPersonal:
 
     existing_movie: models.Movies | None = (
         db.query(models.Movies).filter_by(movie_id=movie_id).first()
     )
+=======
+    current_user: schemas.UserOut = Depends(get_current_user_auth)
+):
+    
+    existing_movie: models.Movies | None = db.query(models.Movies).filter_by(movie_id=movie_id).first()
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
     if existing_movie is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -135,12 +159,19 @@ def update_rating(
 def delete_rating(
     movie_id: int,
     db: Annotated[Session, Depends(get_db)],
+<<<<<<< HEAD
     current_user: schemas.UserOut = Depends(get_current_user_auth),
 ) -> Response:
 
     existing_movie: models.Movies | None = (
         db.query(models.Movies).filter_by(movie_id=movie_id).first()
     )
+=======
+    current_user: schemas.UserOut = Depends(get_current_user_auth)
+):
+    
+    existing_movie: models.Movies | None = db.query(models.Movies).filter_by(movie_id=movie_id).first()
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
     if existing_movie is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

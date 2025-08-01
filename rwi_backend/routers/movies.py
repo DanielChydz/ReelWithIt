@@ -4,8 +4,11 @@ from sqlalchemy.orm import Session
 from rwi_backend import models, schemas
 from rwi_backend.database import get_db
 from rwi_backend.oauth2 import get_current_user_auth
+<<<<<<< HEAD
 
 router = APIRouter(prefix="/movie", tags=["movies"])
+=======
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
 
 
 # frontend debugging, remove later
@@ -13,7 +16,11 @@ router = APIRouter(prefix="/movie", tags=["movies"])
 def get_movies(
     db: Annotated[Session, Depends(get_db)],
 ) -> list[schemas.MovieOut]:
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
     movies = db.query(models.Movies).all()
     return [schemas.MovieOut.model_validate(m) for m in movies]
 
@@ -23,6 +30,7 @@ def get_movies(
 def create_movie(
     movie: schemas.MovieCreate,
     db: Annotated[Session, Depends(get_db)],
+<<<<<<< HEAD
     current_user: schemas.UserOut = Depends(get_current_user_auth),
 ) -> schemas.MovieOut:
 
@@ -36,6 +44,17 @@ def create_movie(
         .first()
     )
 
+=======
+    current_user: schemas.UserOut = Depends(get_current_user_auth)
+) -> schemas.MovieOut:
+    
+    existing_movie = db.query(models.Movies).filter(
+        models.Movies.title == movie.title,
+        models.Movies.year == movie.year,
+        models.Movies.director == movie.director
+    ).first()
+    
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
     if existing_movie:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail=f"Movie already exists"
@@ -54,7 +73,11 @@ def get_movie(
     id: int,
     db: Annotated[Session, Depends(get_db)],
 ) -> schemas.MovieOut:
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
     # Check if movie exists
     existing_movie = (
         db.query(models.Movies).filter(models.Movies.movie_id == id).first()
@@ -74,9 +97,15 @@ def update_movie(
     id: int,
     movie: schemas.MovieCreate,
     db: Annotated[Session, Depends(get_db)],
+<<<<<<< HEAD
     current_user: schemas.UserOut = Depends(get_current_user_auth),
 ) -> schemas.MovieOut:
 
+=======
+    current_user: schemas.UserOut = Depends(get_current_user_auth)
+) -> schemas.MovieOut:
+    
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
     # Check if movie exists
     existing_movie = (
         db.query(models.Movies).filter(models.Movies.movie_id == id).first()
@@ -104,9 +133,15 @@ def update_movie(
 def delete_movie(
     id: int,
     db: Annotated[Session, Depends(get_db)],
+<<<<<<< HEAD
     _current_user: schemas.UserOut = Depends(get_current_user_auth),
 ) -> Response:
 
+=======
+    current_user: schemas.UserOut = Depends(get_current_user_auth)
+):
+    
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
     # Check if movie exists
     existing_movie = (
         db.query(models.Movies).filter(models.Movies.movie_id == id).first()

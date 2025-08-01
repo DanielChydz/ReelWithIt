@@ -16,7 +16,10 @@ class UserCreate(BaseModel):
     username: Annotated[str, StringConstraints(min_length=1, max_length=32)]
     password: Annotated[SecretStr, StringConstraints(min_length=6, max_length=32)]
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
 class UserOut(BaseModel):
     user_id: Annotated[int, Field(strict=True, ge=0)]
     email: Annotated[EmailStr, StringConstraints(min_length=5, max_length=254)]
@@ -25,12 +28,18 @@ class UserOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
 class Token(BaseModel):
     token: str
     token_type: Literal["Bearer"] = "Bearer"
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
 class TokenData(BaseModel):
     user_id: int
 

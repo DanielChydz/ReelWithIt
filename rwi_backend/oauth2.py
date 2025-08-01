@@ -14,9 +14,16 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 def create_access_token(
+<<<<<<< HEAD
     hash_data: dict[str, Any], expires_delta: timedelta = timedelta(minutes=5)
 ) -> schemas.Token:
     to_encode: dict[str, Any] = hash_data.copy()
+=======
+    hash_data: dict, expires_delta: timedelta = timedelta(minutes=5)
+) -> schemas.Token:
+
+    to_encode = hash_data.copy()
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
     expire = datetime.now(timezone.utc) + expires_delta
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(
@@ -27,9 +34,16 @@ def create_access_token(
 
 
 def create_refresh_token(
+<<<<<<< HEAD
     hash_data: dict[str, Any], expires_delta: timedelta = timedelta(days=15)
 ) -> schemas.Token:
     to_encode: dict[str, Any] = hash_data.copy()
+=======
+    hash_data: dict, expires_delta: timedelta = timedelta(days=15)
+) -> schemas.Token:
+
+    to_encode = hash_data.copy()
+>>>>>>> cf9d1b3 (Added refresh tokens, improved readibility)
     expire = datetime.now(timezone.utc) + expires_delta
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(
