@@ -70,6 +70,12 @@ def login_user(
     
     return access_token
 
+# Logout user
+@router.post("/logout")
+def logout(response: Response):
+    response.delete_cookie("refresh_token")
+    return {"message": "Logged out"}
+
 # Refresh token
 @router.post("/refresh", response_model=schemas.Token)
 def refresh_token(
