@@ -5,7 +5,7 @@ class UserCreate(BaseModel):
     email: Annotated[EmailStr, StringConstraints(min_length=5, max_length=254)]
     username: Annotated[str, StringConstraints(min_length=1, max_length=32)]
     password: Annotated[SecretStr, StringConstraints(min_length=6, max_length=32)]
-
+    
 class UserOut(BaseModel):
     user_id: Annotated[int, Field(strict=True, ge=0)]
     email: Annotated[EmailStr, StringConstraints(min_length=5, max_length=254)]
@@ -13,14 +13,15 @@ class UserOut(BaseModel):
     created_at: AwareDatetime
     
     model_config = ConfigDict(from_attributes=True)
-
+    
+class UserLogin(BaseModel):
+    email: Annotated[EmailStr, StringConstraints(min_length=5, max_length=254)]
+    password: Annotated[SecretStr, StringConstraints(min_length=6, max_length=32)]
+    
 class Token(BaseModel):
     access_token: str
     token_type: Literal["Bearer"] = "Bearer"
-
-class UserWithTokenOut(Token):
-    user: UserOut
-
+    
 class TokenData(BaseModel):
     user_id: int
 
