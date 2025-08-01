@@ -11,12 +11,28 @@ from .config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-def create_access_token(hash_data: dict, expires_delta: timedelta = timedelta(minutes=5)) -> schemas.Token:
+def create_access_token(
+    hash_data: dict,
+    expires_delta: timedelta = timedelta(minutes=5)
+) -> schemas.Token:
+    
     to_encode = hash_data.copy()
     expire = datetime.now(timezone.utc) + expires_delta
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, settings.ENCODING_ALGORITHM)
-    token: schemas.Token = schemas.Token(access_token=encoded_jwt)
+    token: schemas.Token = schemas.Token(token=encoded_jwt)
+    return token
+
+def create_refresh_token(
+    hash_data: dict,
+    expires_delta: timedelta = timedelta(days=15)
+) -> schemas.Token:
+    
+    to_encode = hash_data.copy()
+    expire = datetime.now(timezone.utc) + expires_delta
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, settings.ENCODING_ALGORITHM)
+    token: schemas.Token = schemas.Token(token=encoded_jwt)
     return token
 
 def verify_access_token(token: str) -> schemas.TokenData:
@@ -35,7 +51,11 @@ def verify_access_token(token: str) -> schemas.TokenData:
     except JWTError:
         raise credentials_exception
 
-def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Annotated[Session, Depends(get_db)]) -> schemas.UserOut:
+def get_current_user_auth(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: Annotated[Session, Depends(get_db)]
+) -> schemas.UserOut:
+    
     user_token_data: schemas.TokenData = verify_access_token(token)
     user: models.Users | None = db.query(models.Users).filter(models.Users.user_id == user_token_data.user_id).first()
     if user is None:

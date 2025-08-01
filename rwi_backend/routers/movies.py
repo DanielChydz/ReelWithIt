@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 from rwi_backend import models, schemas
 from rwi_backend.database import get_db
-from rwi_backend.oauth2 import get_current_user
+from rwi_backend.oauth2 import get_current_user_auth
 
 router = APIRouter(
     prefix="/movie",
@@ -15,6 +15,7 @@ router = APIRouter(
 def get_movies(
     db: Annotated[Session, Depends(get_db)],
 ) -> list[schemas.MovieOut]:
+    
     movies = db.query(models.Movies).all()
     return [schemas.MovieOut.model_validate(m) for m in movies]
 
@@ -23,8 +24,9 @@ def get_movies(
 def create_movie(
     movie: schemas.MovieCreate,
     db: Annotated[Session, Depends(get_db)],
-    current_user: schemas.UserOut = Depends(get_current_user)
+    current_user: schemas.UserOut = Depends(get_current_user_auth)
 ) -> schemas.MovieOut:
+    
     existing_movie = db.query(models.Movies).filter(
         models.Movies.title == movie.title,
         models.Movies.year == movie.year,
@@ -46,6 +48,7 @@ def get_movie(
     id: int,
     db: Annotated[Session, Depends(get_db)],
 ) -> schemas.MovieOut:
+    
     # Check if movie exists
     existing_movie = db.query(models.Movies).filter(models.Movies.movie_id == id).first()
     if existing_movie == None:
@@ -59,8 +62,9 @@ def update_movie(
     id: int,
     movie: schemas.MovieCreate,
     db: Annotated[Session, Depends(get_db)],
-    current_user: schemas.UserOut = Depends(get_current_user)
+    current_user: schemas.UserOut = Depends(get_current_user_auth)
 ) -> schemas.MovieOut:
+    
     # Check if movie exists
     existing_movie = db.query(models.Movies).filter(models.Movies.movie_id == id).first()
     if existing_movie == None:
@@ -79,8 +83,9 @@ def update_movie(
 def delete_movie(
     id: int,
     db: Annotated[Session, Depends(get_db)],
-    current_user: schemas.UserOut = Depends(get_current_user)
+    current_user: schemas.UserOut = Depends(get_current_user_auth)
 ):
+    
     # Check if movie exists
     existing_movie = db.query(models.Movies).filter(models.Movies.movie_id == id).first()
     if existing_movie == None:

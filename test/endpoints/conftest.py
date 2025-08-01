@@ -65,7 +65,7 @@ def unauthorized_client() -> Generator[TestClient, None, None]:
 @pytest.fixture
 def authorized_client(test_user_token: schemas.Token) -> TestClient:
     authorized_client = TestClient(rwi)
-    authorized_client.headers = {**authorized_client.headers, "Authorization": f"Bearer {test_user_token.access_token}"}
+    authorized_client.headers = {**authorized_client.headers, "Authorization": f"Bearer {test_user_token.token}"}
     return authorized_client
 
 @pytest.fixture

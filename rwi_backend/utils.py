@@ -9,7 +9,12 @@ def HashPassword(pwd: SecretStr) -> str:
 def VerifyPassword(plain_password, hashed_password) -> bool:
     return password_hash.verify(plain_password, hashed_password)
 
-def AddRating(current_rating: float, current_number_of_ratings: int, added_rating: float) -> float:
+def AddRating(
+    current_rating: float,
+    current_number_of_ratings: int,
+    added_rating: float
+) -> float:
+    
     if (round(added_rating, 1) != added_rating) or (added_rating < 1) or (added_rating > 10):
         raise ValueError("Invalid rating")
     if current_number_of_ratings == 0:
@@ -17,13 +22,24 @@ def AddRating(current_rating: float, current_number_of_ratings: int, added_ratin
     new_rating: float = (current_rating * current_number_of_ratings + added_rating) / (current_number_of_ratings + 1)
     return new_rating
 
-def RemoveRating(current_rating: float, current_number_of_ratings: int, removed_rating: float) -> float:
+def RemoveRating(
+    current_rating: float,
+    current_number_of_ratings: int,
+    removed_rating: float
+) -> float:
+    
     if current_number_of_ratings == 1:
         return 5
     new_rating: float = (current_rating * current_number_of_ratings - removed_rating) / (current_number_of_ratings - 1)
     return new_rating
 
-def UpdateRating(current_rating: float, current_number_of_ratings: int, old_rating: float, new_rating: float) -> float:
+def UpdateRating(
+    current_rating: float,
+    current_number_of_ratings: int,
+    old_rating: float,
+    new_rating: float
+) -> float:
+    
     if (round(new_rating, 1) != new_rating) or (new_rating < 1) or (new_rating > 10):
         raise ValueError("Invalid rating")
     removed_old_rating = RemoveRating(current_rating, current_number_of_ratings, old_rating)

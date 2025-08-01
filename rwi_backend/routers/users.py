@@ -6,19 +6,34 @@ from rwi_backend import models, schemas
 from sqlalchemy.orm import Session
 from rwi_backend.database import get_db
 from rwi_backend.utils import HashPassword
-from rwi_backend.oauth2 import oauth2_scheme, get_current_user
+from rwi_backend.oauth2 import oauth2_scheme, get_current_user_auth
 
 router = APIRouter(
     prefix="/user",
     tags=["users"]
 )
 
+# Read logged user
+@router.get("/me", response_model=schemas.UserOut)
+def get_current_user(
+    id: int,
+    db: Annotated[Session, Depends(get_db)],
+    current_user: schemas.UserOut = Depends(get_current_user_auth)
+) -> schemas.UserOut:
+    
+    # Check if user exists
+    existing_user = db.query(models.Users).filter(models.Users.user_id == id).first()
+    if existing_user == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {id} not found")
+    user_model_to_schema = schemas.UserOut.model_validate(existing_user)
+    return user_model_to_schema
+
 # Read user
 @router.get("/{username}", response_model=schemas.UserOut)
 def get_user(
     username: str,
     db: Annotated[Session, Depends(get_db)],
-    current_user: schemas.UserOut = Depends(get_current_user)
+    current_user: schemas.UserOut = Depends(get_current_user_auth)
 ) -> schemas.UserOut:
     
     # Check if user exists
@@ -34,7 +49,7 @@ def update_user(
     username: str,
     user: schemas.UserCreate,
     db: Annotated[Session, Depends(get_db)],
-    current_user: schemas.UserOut = Depends(get_current_user)
+    current_user: schemas.UserOut = Depends(get_current_user_auth)
 ) -> schemas.UserOut:
     
     existing_user: models.Users | None = db.query(models.Users).filter(models.Users.username == username).first()
@@ -65,7 +80,7 @@ def update_user(
 def delete_user(
     username: str,
     db: Annotated[Session, Depends(get_db)],
-    current_user: schemas.UserOut = Depends(get_current_user)
+    current_user: schemas.UserOut = Depends(get_current_user_auth)
 ):
     
     existing_user = db.query(models.Users).filter(models.Users.username == username).first()
