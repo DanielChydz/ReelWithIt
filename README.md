@@ -1,4 +1,4 @@
-*This is a work in progress. The app is not fully functional yet, and is continuously developed. Frontend is yet to be published.*
+*This is a work in progress. The app is not fully functional yet, and is continuously developed.*
 
 # 🎬 ReelWithIt
 
