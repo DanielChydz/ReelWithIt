@@ -1,6 +1,16 @@
 @import "tailwindcss";
 
-body {
-  @apply bg-gray-100;
-  margin: 0;
+@theme {
+  --color-primary: #c1271a;
+  --color-primary-light: #e3472a;
+  --color-primary-dark: #84180e;
+
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-foreground: #f1f5f9;
+
+  --color-accent: #0ea5e9;
+  --color-accent-dark: #0284c7;
+  --color-success: #16a34a;
+  --color-danger: #dc2626;
 }
