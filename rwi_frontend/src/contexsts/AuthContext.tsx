@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+} from "react";
 import type {
   userData,
   userLoginData,
@@ -11,9 +17,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<userData | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const didRunRef = useRef(false);
 
   useEffect(() => {
     async function tryRefresh(): Promise<void> {
+      if (didRunRef.current) return;
+      didRunRef.current = true;
       try {
         const res = await fetch("/auth/refresh", {
           method: "POST",
