@@ -59,7 +59,7 @@ def verify_access_token(token: str) -> schemas.TokenData:
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-
+    
     try:
         payload: dict[str, Any] = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.ENCODING_ALGORITHM]
