@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useRef,
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import type {
   userData,
   userLoginData,
@@ -17,14 +11,24 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<userData | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const didRunRef = useRef(false);
+
+  // load cached user before refreshing
+  const cached = localStorage.getItem("user");
+  if (user === null && cached !== null) {
+    try {
+      const parsed = JSON.parse(cached) as userData;
+      setUser(parsed);
+    } catch {
+      localStorage.removeItem("user");
+    }
+  }
 
   useEffect(() => {
+    async function fetchUser() {}
+
     async function tryRefresh(): Promise<void> {
-      if (didRunRef.current) return;
-      didRunRef.current = true;
       try {
-        const res = await fetch("/auth/refresh", {
+        const res = await fetch("http://localhost:8000/auth/refresh", {
           method: "POST",
           credentials: "include",
         });
@@ -32,24 +36,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!res.ok) {
           setAccessToken(null);
           setUser(null);
+          return;
         }
 
         const loginData = await res.json();
-        setAccessToken(loginData.accessToken);
+        setAccessToken(loginData.token);
 
-        const userRes = await fetch("user/me", {
-          headers: { Authorization: `Bearer ${loginData.accessToken}` },
+        const userRes = await fetch("http://localhost:8000/user/me", {
+          headers: { Authorization: `Bearer ${loginData.token}` },
         });
 
         if (!userRes.ok) {
           setUser(null);
+          return;
         }
 
         const userData = await userRes.json();
-        setUser(userData);
+        if (userData.detail != "Could not validate credentials") {
+          setUser(userData);
+          localStorage.setItem("user", JSON.stringify(userData));
+        }
       } catch (err) {
         setAccessToken(null);
         setUser(null);
+        localStorage.removeItem("user");
       }
     }
 
@@ -57,9 +67,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   async function register(user: userRegisterData): Promise<void> {
-    const res = await fetch("/auth/register", {
+    const res = await fetch("http://localhost:8000/auth/register", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email: user.email,
         username: user.username,
@@ -71,15 +81,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error("Registration failed");
     }
 
-    logIn(user);
+    const loginData: userLoginData = {
+      email: user.email,
+      password: user.password,
+    };
+
+    logIn(loginData);
   }
 
   async function logIn(user: userLoginData): Promise<void> {
-    const res = await fetch("/auth/refresh", {
+    const res = await fetch("http://localhost:8000/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       credentials: "include",
-      body: JSON.stringify({ username: user.email, password: user.password }),
+      body: new URLSearchParams({
+        username: user.email,
+        password: user.password,
+      }),
     });
 
     if (!res.ok) {
@@ -87,22 +105,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const loginDataRes = await res.json();
-    setAccessToken(loginDataRes.accessToken);
+    setAccessToken(loginDataRes.token);
 
-    const userRes = await fetch("user/me", {
-      headers: { Authorization: `Bearer ${loginDataRes.accessToken}` },
+    const userRes = await fetch("http://localhost:8000/user/me", {
+      headers: { Authorization: `Bearer ${loginDataRes.token}` },
     });
 
     if (!userRes.ok) {
-      throw new Error("Could not fetch user data");
+      setUser(null);
     }
 
     const userData = await userRes.json();
-    setUser(userData);
+    if (userData.detail != "Could not validate credentials") {
+      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
+    }
   }
 
   async function logOut(): Promise<void> {
-    const res = await fetch("/auth/logout", {
+    const res = await fetch("http://localhost:8000/auth/logout", {
       method: "POST",
       credentials: "include",
     });
@@ -113,7 +134,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     setAccessToken("");
     setUser(null);
-    window.location.reload();
+    localStorage.removeItem("user");
   }
 
   return (
