@@ -16,13 +16,12 @@ router = APIRouter(
 # Read logged user
 @router.get("/me", response_model=schemas.UserOut)
 def get_current_user(
-    id: int,
     db: Annotated[Session, Depends(get_db)],
     current_user: schemas.UserOut = Depends(get_current_user_auth)
 ) -> schemas.UserOut:
     
     # Check if user exists
-    existing_user = db.query(models.Users).filter(models.Users.user_id == id).first()
+    existing_user = db.query(models.Users).filter(models.Users.user_id == current_user.user_id).first()
     if existing_user == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {id} not found")
     user_model_to_schema = schemas.UserOut.model_validate(existing_user)

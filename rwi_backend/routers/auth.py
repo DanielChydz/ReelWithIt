@@ -55,7 +55,7 @@ def login_user(
     
     time_delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token: schemas.Token = create_access_token({"id": user.user_id}, time_delta)
-    time_delta = timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    time_delta = timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
     refresh_token: schemas.Token = create_refresh_token({"id": user.user_id}, time_delta)
     
     response.set_cookie(
@@ -81,7 +81,7 @@ def logout(response: Response):
 def refresh_token(
     request: Request,
     response: Response
-):
+) -> schemas.Token:
     
     refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:
