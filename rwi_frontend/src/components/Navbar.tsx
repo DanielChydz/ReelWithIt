@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../contexsts/AuthContext";
 
 export default function Navbar() {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const authCtx = useAuthContext();
 
   return (
@@ -32,7 +32,6 @@ export default function Navbar() {
           >
             Log Out
           </button>
-
           <button
             onClick={() => navigate("/profile")}
             className="bg-primary hover:bg-primary-dark text-foreground px-4 py-1 rounded-4xl cursor-pointer transition"

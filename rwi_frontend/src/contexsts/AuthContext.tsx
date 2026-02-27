@@ -9,23 +9,20 @@ import type {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<userData | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-
   // load cached user before refreshing
-  const cached = localStorage.getItem("user");
-  if (user === null && cached !== null) {
+  const [user, setUser] = useState<userData | null>(() => {
+    const rawUserData = localStorage.getItem("user");
+    if (!rawUserData) return null;
     try {
-      const parsed = JSON.parse(cached) as userData;
-      setUser(parsed);
+      return JSON.parse(rawUserData) as userData;
     } catch {
       localStorage.removeItem("user");
+      return null;
     }
-  }
+  });
 
   useEffect(() => {
-    async function fetchUser() {}
-
     async function tryRefresh(): Promise<void> {
       try {
         const res = await fetch("http://localhost:8000/auth/refresh", {
