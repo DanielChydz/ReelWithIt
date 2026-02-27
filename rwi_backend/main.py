@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from rwi_backend.routers import auth, ratings, users, movies
+from .routers import auth, ratings, users, movies
 
 rwi = FastAPI()
 

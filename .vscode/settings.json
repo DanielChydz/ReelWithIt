@@ -2,6 +2,16 @@
   "python.testing.pytestEnabled": true,
   "python.testing.unittestEnabled": false,
   "python.testing.pytestArgs": [
-    "test"
-  ]
+    "tests"
+  ],
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  }
+  ,
+  "python.defaultInterpreterPath": "${workspaceFolder}/rwi_backend/.venv-rwi-backend/bin/python",
+  "python.pythonPath": "${workspaceFolder}/rwi_backend/.venv-rwi-backend/bin/python",
+  "python.venvPath": "${workspaceFolder}/rwi_backend"
 }
